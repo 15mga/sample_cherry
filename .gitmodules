@@ -1,0 +1,3 @@
+[submodule "Assets/Script/proto"]
+	path = Assets/Script/proto
+	url = git@github.com:15mga/sample_proto.git

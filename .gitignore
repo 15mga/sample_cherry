@@ -1,0 +1,8 @@
+.idea
+Library
+Logs
+Temp
+obj
+UserSettings
+Bundles
+*.DS_Store
