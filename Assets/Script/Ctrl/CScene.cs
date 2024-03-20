@@ -28,11 +28,12 @@ namespace Script.Ctrl
                 });
         }
 
-        public void Movement(SceneMovement movement)
+        public void Movement(float speed = 0, Vector2 direction = null)
         {
             Game.Ctrl.Get<CConn>().Request<SceneMovementRes>(new SceneMovementReq
             {
-                Movement = movement,
+                MoveSpeed = speed,
+                Direction = direction,
             }, code =>
             {
                 switch (code)

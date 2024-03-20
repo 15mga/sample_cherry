@@ -596,7 +596,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u6DFB\u52A0\u673A\u5668\u4EBA(500)"
+  m_text: "\u6DFB\u52A0\u673A\u5668\u4EBA(1000)"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3bd21f304e77db54eb98a1f35f6a2680, type: 2}
   m_sharedMaterial: {fileID: 2979193228837331801, guid: 3bd21f304e77db54eb98a1f35f6a2680,
@@ -679,7 +679,7 @@ GameObject:
   - component: {fileID: 7335871300356166107}
   - component: {fileID: 7823974482658804475}
   m_Layer: 5
-  m_Name: BtnAddRobot500
+  m_Name: BtnAddRobot1000
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

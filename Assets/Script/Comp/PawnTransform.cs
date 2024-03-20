@@ -9,7 +9,7 @@ namespace Script.Comp
 {
     public class PawnTransform : MonoBehaviour
     {
-        private Queue<SceneMovementEvt> _movements = new();
+        private Queue<SceneMovement> _movements = new();
 
         private bool _moving;
 
@@ -19,14 +19,10 @@ namespace Script.Comp
 
         [SerializeField] private float _scale = 3;
         
-        public void PushMovement(RepeatedField<SceneMovementEvt> movements)
+        public void PushMovement(SceneMovement movement)
         {
-            // Game.Log.Debug($"push transform:{movements}");
-            foreach (var movement in movements)
-            {
-                _movements.Enqueue(movement);
-                _totalMs += movement.Duration;
-            }
+            _movements.Enqueue(movement);
+            _totalMs += movement.Duration;
             if (!_moving)
             {
                 ProcessMovement();

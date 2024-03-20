@@ -2,7 +2,6 @@
   "dependencies": {
     "15m.games.cherry": "git@github.com:15mga/cherry.git",
     "com.psygames.unitywebsocket": "https://github.com/psygames/UnityWebSocket.git#upm",
-    "com.tuanjie.muse.chat": "file:/Users/95eh/95eh.com/u3d/unity.com/tuanjiemusechat-package",
     "com.tuyoogame.yooasset": "2.1.1",
     "com.unity.ide.rider": "3.0.27",
     "com.unity.render-pipelines.universal": "14.0.8",

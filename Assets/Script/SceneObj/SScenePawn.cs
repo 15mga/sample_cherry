@@ -19,6 +19,7 @@ namespace Script.SceneObj
         [AChild("SPawn")] private Transform _pawnRoot;
         
         private Transform _player;
+        private string _playerId;
 
         private Dictionary<string, PawnTransform> _idToPawn = new();
         private int _currPawn;
@@ -39,6 +40,7 @@ namespace Script.SceneObj
         private void OnPrefabComplete(object obj)
         {
             var player = Game.Model.Get<MPlayer>().Player;
+            _playerId = player.Id;
             var hero = player.Hero;
             var go = Game.Scene.GetObj<SScenePrefab>().InstantiatePlayer(hero);
             var pawnTnf = go.AddComponent<PawnTransform>();
@@ -46,7 +48,7 @@ namespace Script.SceneObj
             _player.SetParent(_pawnRoot);
             Game.Camera.CreatePlayerCamera(0, 45, _player, 48);
             go.SetActive(false);
-            _idToPawn.Add(player.Id, pawnTnf);
+            _idToPawn.Add(_playerId, pawnTnf);
             
             Game.Ctrl.Get<CScene>().EntryScene();
         }
@@ -60,58 +62,70 @@ namespace Script.SceneObj
 
         private void OnEventPus(SceneEventPus evt)
         {
-            foreach (var pawnEvt in evt.Visible)
+            var visible = new HashSet<string>();
+            var invisible = new HashSet<string>();
+            foreach (var sceneEvent in evt.Events)
             {
-                NewPawn(pawnEvt);
-            }
-            
-            foreach (var transformEvt in evt.Transform)
-            {
-                UpdateTransform(transformEvt);
+                switch (sceneEvent.EventCase)
+                {
+                    case SceneEvent.EventOneofCase.Invisible:
+                        if (sceneEvent.Id == _playerId) continue;
+                        invisible.Add(sceneEvent.Id);
+                        break;
+                    case SceneEvent.EventOneofCase.Visible:
+                        if (sceneEvent.Id == _playerId) continue;
+                        NewPawn(sceneEvent.Id,sceneEvent.Visible);
+                        visible.Add(sceneEvent.Id);
+                        break;
+                    case SceneEvent.EventOneofCase.Movement:
+                        UpdateMovement(sceneEvent.Id, sceneEvent.Movement);
+                        break;
+                }
             }
 
-            foreach (var invisibleEvt in evt.Invisible)
+            foreach (var id in invisible)
             {
-                DisposePawn(invisibleEvt);
+                if (visible.Contains(id)) continue;
+                DisposePawn(id);
             }
 
             Game.Notice.DispatchNotice(N_Pawn_Curr, _currPawn);
         }
 
-        private void UpdateTransform(SceneTransformEvt transformEvt)
+        private void UpdateMovement(string id, SceneMovement movement)
         {
-            if (_idToPawn.TryGetValue(transformEvt.PawnId, out var pawn))
+            if (_idToPawn.TryGetValue(id, out var pawn))
             {
-                pawn.PushMovement(transformEvt.Movement);
+                pawn.PushMovement(movement);
             }
         }
 
-        private void NewPawn(ScenePawnEvt pawnEvt)
+        private void NewPawn(string id, SceneVisible visible)
         {
-            if (_idToPawn.TryGetValue(pawnEvt.PawnId, out _)) return;
+            if (_idToPawn.TryGetValue(id, out _)) return;
             _currPawn++;
-            switch (pawnEvt.PawnTypeCase)
+            switch (visible.PawnTypeCase)
             {
-                case ScenePawnEvt.PawnTypeOneofCase.Player:
-                    SpawnPlayer(pawnEvt);
+                case SceneVisible.PawnTypeOneofCase.Player:
+                    SpawnPlayer(id, visible);
                     break;
-                case ScenePawnEvt.PawnTypeOneofCase.Monster:
-                    SpawnMonster(pawnEvt);
+                case SceneVisible.PawnTypeOneofCase.Monster:
+                    SpawnMonster(id, visible);
                     break;
             }
         }
 
-        private void SpawnPlayer(ScenePawnEvt pawnEvt)
+        private void SpawnPlayer(string id, SceneVisible pawnEvt)
         {
             var hero = pawnEvt.Player.Hero;
             var go = Game.Scene.GetObj<SScenePrefab>().InstantiatePlayer(hero);
             go.transform.SetParent(_pawnRoot);
             var pawn = go.AddComponent<PawnTransform>();
             pawn.transform.position = pawnEvt.Position.PbToVec3();
-            _idToPawn.Add(pawnEvt.PawnId, pawn);
+            _idToPawn.Add(id, pawn);
         }
 
-        private void SpawnMonster(ScenePawnEvt pawnEvt)
+        private void SpawnMonster(string id, SceneVisible pawnEvt)
         {
             var tplId = pawnEvt.Monster.TplId;
             Game.Log.Debug($"spawn monster: {tplId}");
@@ -119,7 +133,7 @@ namespace Script.SceneObj
             go.transform.SetParent(_pawnRoot);
             var pawn = go.AddComponent<PawnTransform>();
             pawn.transform.position = pawnEvt.Position.PbToVec3();
-            _idToPawn.Add(pawnEvt.PawnId, pawn);
+            _idToPawn.Add(id, pawn);
         }
 
         private void DisposePawn(string id)

@@ -18,7 +18,7 @@ namespace Script.View
     {
         [AChild("Center")] private Transform _ctrlCenter;
         [AChild("BtnAddRobot100")] private Button _btnAddRobot100;
-        [AChild("BtnAddRobot500")] private Button _btnAddRobot500;
+        [AChild("BtnAddRobot1000")] private Button _btnAddRobot1000;
         [AChild("BtnClearRobot")] private Button _btnClearRobot;
         [AChild("TxtCurr")] private TMP_Text _txtCurr;
         [AChild("TxtTotal")] private TMP_Text _txtTotal;
@@ -37,7 +37,7 @@ namespace Script.View
             _centerDrag.OnDragEnd.AddListener(OnDragEnd);
             _centerDrag.OnDragging.AddListener(OnDragging);
             _btnAddRobot100.onClick.AddListener(OnClickAddRobot100);
-            _btnAddRobot500.onClick.AddListener(OnClickAddRobot500);
+            _btnAddRobot1000.onClick.AddListener(OnClickAddRobot1000);
             _btnClearRobot.onClick.AddListener(OnClickClearRobot);
             ClearCurrAngle();
             BindNotice(SScenePawn.N_Pawn_Curr, OnPawnCurr);
@@ -64,7 +64,7 @@ namespace Script.View
             _centerDrag.OnDragEnd.RemoveAllListeners();
             _centerDrag.OnDragging.RemoveAllListeners();
             _btnAddRobot100.onClick.RemoveAllListeners();
-            _btnAddRobot500.onClick.RemoveAllListeners();
+            _btnAddRobot1000.onClick.RemoveAllListeners();
             _btnClearRobot.onClick.RemoveAllListeners();
             base.OnUnload();
         }
@@ -78,10 +78,7 @@ namespace Script.View
         {
             _ctrlCenter.localPosition = Vector3.zero;
             ClearCurrAngle();
-            Game.Ctrl.Get<CScene>().Movement(new SceneMovement
-            {
-                MoveSpeed = 0,
-            });
+            Game.Ctrl.Get<CScene>().Movement();
         }
 
         private void OnDragging(PointerEventData data)
@@ -109,14 +106,10 @@ namespace Script.View
             
             if (angle == _currAngle) return;
             _currAngle = angle;
-            Game.Ctrl.Get<CScene>().Movement(new SceneMovement
+            Game.Ctrl.Get<CScene>().Movement(20, new Pb.Vector2
             {
-                Direction = new Pb.Vector2
-                {
-                    X = normalized.x,
-                    Y = normalized.y,
-                },
-                MoveSpeed = 4,
+                X = normalized.x,
+                Y = normalized.y,
             });
         }
 
@@ -131,11 +124,11 @@ namespace Script.View
             });
         }
 
-        private void OnClickAddRobot500()
+        private void OnClickAddRobot1000()
         {
-            _totalPawn += 500;
+            _totalPawn += 5000;
             UpdatePawnTotal();
-            Game.Ctrl.Get<CScene>().AddRobot(500, count =>
+            Game.Ctrl.Get<CScene>().AddRobot(5000, count =>
             {
                 _totalPawn = count;
                 UpdatePawnTotal();

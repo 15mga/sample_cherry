@@ -17,14 +17,6 @@
       "dependencies": {},
       "hash": "07fbb6bb5e8ebcc415ceb698a7a1120707967a8d"
     },
-    "com.tuanjie.muse.chat": {
-      "version": "file:/Users/95eh/95eh.com/u3d/unity.com/tuanjiemusechat-package",
-      "depth": 0,
-      "source": "local",
-      "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "3.2.1"
-      }
-    },
     "com.tuyoogame.yooasset": {
       "version": "2.1.1",
       "depth": 0,
