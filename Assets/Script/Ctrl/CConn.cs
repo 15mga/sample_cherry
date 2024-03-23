@@ -12,6 +12,7 @@ namespace Script.Ctrl
 {
     public class CConn : CtrlBase
     {
+        public const string N_Connect_Change = "connect_change";
         private class Req
         {
             public Action<ushort> ResFail;
@@ -19,6 +20,7 @@ namespace Script.Ctrl
             public ushort Code;
             public float ReqTime;
         }
+        public bool IsConnected { get; private set; }
         private WebSocket _socket;
         private uint _seqId;
         private readonly Dictionary<uint, Req> _seqIdToReq = new();
@@ -26,7 +28,6 @@ namespace Script.Ctrl
         private readonly Dictionary<object, Action<IMessage>> _handlerToListener = new();
         public override void Initialize(Action onComplete = null)
         {
-            
         }
 
         public override void Dispose()
@@ -73,11 +74,16 @@ namespace Script.Ctrl
         private void OnOpen(object sender, OpenEventArgs e)
         {
             Game.Log.Debug("on websocket open");
+            IsConnected = true;
+            Game.Notice.DispatchNotice(N_Connect_Change);
         }
 
         private void OnClose(object sender, CloseEventArgs e)
         {
             Game.Log.Debug("on websocket close");
+            Game.Timer.Bind(5, Conn);
+            IsConnected = false;
+            Game.Notice.DispatchNotice(N_Connect_Change);
         }
 
         private void OnMessage(object sender, MessageEventArgs e)

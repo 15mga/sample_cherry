@@ -24,9 +24,12 @@ namespace Script.View
             
             _btnOk.onClick.AddListener(OnClickOk);
             _btnSignUp.onClick.AddListener(OnClickSignUp);
+            BindNotice(CConn.N_Connect_Change, OnUpdateConnState);
 
             _iptUser.text = "15m@15m.games";
             _iptPassword.text = "12341234";
+            
+            OnUpdateConnState(null);
         }
 
         protected override void OnHide()
@@ -35,6 +38,20 @@ namespace Script.View
             _btnSignUp.onClick.RemoveAllListeners();
             
             base.OnHide();
+        }
+
+        private void OnUpdateConnState(object data)
+        {
+            if (Game.Ctrl.Get<CConn>().IsConnected)
+            {
+                _btnOk.enabled = true;
+                _btnSignUp.enabled = true;
+            }
+            else
+            {
+                _btnOk.enabled = false;
+                _btnSignUp.enabled = false;
+            }
         }
 
         private void OnClickSignUp()
@@ -48,24 +65,6 @@ namespace Script.View
             Game.Ctrl.Get<CUser>().SignIn(_iptUser.text, _iptPassword.text, msg =>
             {
                 _txtTip.text = msg;
-            });
-        }
-
-        private void GetPlayer()
-        {
-            Game.Ctrl.Get<CConn>().Request<PlayerRes>(new PlayerReq(),
-                code =>
-            {
-                Game.Log.Error("这里应该弹出获取角色信息失败！！");
-            }, res =>
-            {
-                Game.Model.Get<MPlayer>().SetPlayer(res.Player);
-                Game.View.GetView<VSignIn>().Hide();
-                Game.Scene.LoadScene("Room", () =>
-                {
-                    Game.Log.Debug("room list show");
-                    Game.View.GetView<VRoomList>().Show();
-                });
             });
         }
     }
