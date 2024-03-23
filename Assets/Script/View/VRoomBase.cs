@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Cherry;
 using Cherry.Attr;
+using Cherry.Extend;
 using Cherry.View;
 using Pb;
 using Script.Ctrl;
@@ -34,6 +35,7 @@ namespace Script.View
         [AChild("MemberTxtMaxPlayers")] private TMP_Text _txtMaxPlayersMember;
         [AChild("MemberBtnExit")] private Button _btnExitMember;
         [AChild("MemberBtnReady")] private Button _btnReadyMember;
+        private bool _isReady;
         protected override void OnShow()
         {
             base.OnShow();
@@ -149,6 +151,10 @@ namespace Script.View
             {
                 switch (code)
                 {
+                    case 0:
+                        var tmp = _btnReadyMember.transform.FindComp<TMP_Text>("Text (TMP)");
+                        tmp.text = Game.Model.Get<MRoom>().IsReady ? "取消" : "准备";
+                        break;
                     case 1:
                         Game.Log.Debug("房间不存在");
                         break;

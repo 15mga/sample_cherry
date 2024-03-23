@@ -7,9 +7,10 @@ namespace Script.Model
     public class MRoom : ModelBase
     {
         public const string NRoomModify = "room_edited";
+        public const string NRoomReady = "room_ready";
         public Room Room { get; private set; }
 
-        private bool _isReady;
+        public bool IsReady{ get;  private set; }
         
         public void SetRoom(Room room)
         {
@@ -17,10 +18,10 @@ namespace Script.Model
             Game.Notice.DispatchNotice(NRoomModify);
         }
 
-        public bool ChangeReady()
+        public void SetReady(bool isReady)
         {
-            _isReady = !_isReady;
-            return _isReady;
+            IsReady = isReady;
+            Game.Notice.DispatchNotice(NRoomReady);
         }
     }
 }

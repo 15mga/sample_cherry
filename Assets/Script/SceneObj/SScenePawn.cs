@@ -85,11 +85,26 @@ namespace Script.SceneObj
 
             foreach (var id in invisible)
             {
-                if (visible.Contains(id)) continue;
+                //todo 服务端为节省性能会发出id重复的visible和invisible,需要处理，
+                //todo 但有网络延迟的时候这里也不可靠，后期再另行处理
+                if (visible.Contains(id) && IgnoreDispose(id)) continue;
                 DisposePawn(id);
             }
 
             Game.Notice.DispatchNotice(N_Pawn_Curr, _currPawn);
+        }
+
+        private bool IgnoreDispose(string id)
+        {
+            if (!_idToPawn.TryGetValue(id, out var pawn)) return true;
+            var pp = _player.position;
+            var px = Mathf.FloorToInt(pp.x/64);
+            var py = Mathf.FloorToInt(pp.y/64);
+            var tp = pawn.transform.position;
+            var tx = Mathf.FloorToInt(tp.x/64);
+            var ty = Mathf.FloorToInt(tp.y/64);
+            return Mathf.Abs(tx - px) <= 1 && Mathf.Abs(ty - py) <= 1;
+
         }
 
         private void UpdateMovement(string id, SceneMovement movement)

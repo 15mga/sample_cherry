@@ -239,11 +239,12 @@ namespace Script.Ctrl
         {
             Game.Ctrl.Get<CConn>().Request<RoomReadyRes>(new RoomReadyReq
                 {
-                    IsReady = Model.ChangeReady()
+                    IsReady = !Model.IsReady
                 }, 
                 handler, 
                 res =>
                 {
+                    Model.SetReady(!Model.IsReady);
                     handler(0);
                 });
         }
